@@ -53,20 +53,25 @@ ARGV.each do |path|
   file = File.open(path, "r")
   doc = Nokogiri::XML(file)
   contents.push(extract_dict(doc.xpath("/plist/dict")))
-  #puts JSON.pretty_generate extract_dict(doc.xpath("/plist/dict")) #.to_json
-  file.close()
+  # puts JSON.pretty_generate extract_dict(doc.xpath("/plist/dict")) #.to_json
+  file.close
 end
 
 contents.each do |content|
-  content["Tracks"].each do |key, value|
+  content["Tracks"].each do |_, value|
+    # it looks like iCloud stuff has no path
+    next if value["Location"].nil?
     path = value["Location"].sub("file://", "")
-    if not File.exists?(path) \
-       and (not path.include?("/Podcasts/") or value.has_key?("Podcast") and not value["Podcast"]) \
-       and not path.include?("/Voice Memos/")
-    #if not path.include?("/Podcasts/") and not path.include?("/Voice Memos/")
-      puts "#{value["Artist"]} - #{value["Name"]}, #{value["Play Count"]}"
-      #FileUtils.touch(File.join(".", "music", File.basename(path)))
-      #FileUtils.touch(path)
-    end
+    # make sure it is a file
+    next unless File.exist?(path)
+    # TODO: The new library also has media kind
+    # ignore podcasts
+    next if path.include?("/Podcasts/")
+    next if value.key?("Podcast") && value["Podcast"]
+    # ignore voice memos
+    next if path.include?("/Voice Memos/")
+    puts "#{value["Artist"]} - #{value["Name"]}, #{value["Play Count"]}"
+    # FileUtils.touch(File.join(".", "music", File.basename(path)))
+    # FileUtils.touch(path)
   end
 end
