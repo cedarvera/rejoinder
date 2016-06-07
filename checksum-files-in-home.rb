@@ -49,7 +49,7 @@ statuses_tb = DB[:statuses]
 files_tb = DB[:files]
 
 scantime = DateTime.now.to_time
-if times_tb[:time => scantime] == nil then times_tb.insert(:time => scantime) end
+if times_tb[:time => scantime].nil? then times_tb.insert(:time => scantime) end
 scantime_key = DB[:times][:time => scantime][:time_key]
 Find.find(ENV["HOME"]) do |path|
   if FileTest.file?(path)
@@ -61,19 +61,19 @@ Find.find(ENV["HOME"]) do |path|
     ctime = File.ctime(path)
     btime = File.birthtime(path)
     # add the data to tables if not there
-    if paths_tb[:path => path]  == nil then paths_tb.insert(:path => path, :name => File.basename(path)) end
-    if sizes_tb[:size => size]  == nil then sizes_tb.insert(:size => size) end
-    if times_tb[:time => mtime] == nil then times_tb.insert(:time => mtime) end
-    if times_tb[:time => atime] == nil then times_tb.insert(:time => atime) end
-    if times_tb[:time => ctime] == nil then times_tb.insert(:time => ctime) end
-    if times_tb[:time => btime] == nil then times_tb.insert(:time => btime) end
+    if paths_tb[:path => path].nil? then paths_tb.insert(:path => path, :name => File.basename(path)) end
+    if sizes_tb[:size => size].nil? then sizes_tb.insert(:size => size) end
+    if times_tb[:time => mtime].nil? then times_tb.insert(:time => mtime) end
+    if times_tb[:time => atime].nil? then times_tb.insert(:time => atime) end
+    if times_tb[:time => ctime].nil? then times_tb.insert(:time => ctime) end
+    if times_tb[:time => btime].nil? then times_tb.insert(:time => btime) end
     # get the keys from the table
     mtime_key = times_tb[:time => mtime][:time_key]
     atime_key = times_tb[:time => atime][:time_key]
     ctime_key = times_tb[:time => ctime][:time_key]
     btime_key = times_tb[:time => btime][:time_key]
     # insert the status if the time key combination is not found
-    if statuses_tb[:mtime_key => mtime_key, :atime_key => atime_key, :ctime_key => ctime_key, :btime_key => btime_key] == nil
+    if statuses_tb[:mtime_key => mtime_key, :atime_key => atime_key, :ctime_key => ctime_key, :btime_key => btime_key].nil?
       statuses_tb.insert(
         :mtime_key => mtime_key,
         :atime_key => atime_key,
