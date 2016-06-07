@@ -11,43 +11,41 @@ def extract_dict(dict)
   hash = {}
   key = nil
   dict.children.each do |item|
-    if item.element?
-      case item.name
-        when "key"          then key = item.content
-        when "string"       then hash[key] = URI.unescape(item.content)
-        when "date", "data" then hash[key] = item.content
-        when "integer"      then hash[key] = Integer(item.content)
-        when "true"         then hash[key] = true
-        when "false"        then hash[key] = false
-        when "array"        then hash[key] = extract_array(item)
-        when "dict"         then hash[key] = extract_dict(item)
-        else
-          puts item.name
-      end
+    next unless item.element?
+    case item.name
+    when "key"          then key = item.content
+    when "string"       then hash[key] = URI.unescape(item.content)
+    when "date", "data" then hash[key] = item.content
+    when "integer"      then hash[key] = Integer(item.content)
+    when "true"         then hash[key] = true
+    when "false"        then hash[key] = false
+    when "array"        then hash[key] = extract_array(item)
+    when "dict"         then hash[key] = extract_dict(item)
+    else
+      puts item.name
     end
   end
-  return hash
+  hash
 end
 
 # extract the array data
 def extract_array(array)
   arr = []
   array.children.each do |item|
-    if item.element?
-      case item.name
-        when "string"       then arr.push(URI.unescape(item.content))
-        when "date", "data" then arr.push(item.content)
-        when "integer"      then arr.push(Integer(item.content))
-        when "true"         then arr.push(true)
-        when "false"        then arr.push(false)
-        when "array"        then arr.push(extract_array(item))
-        when "dict"         then arr.push(extract_dict(item))
-        else
-          puts item.name
-      end
+    next unless item.element?
+    case item.name
+    when "string"       then arr.push(URI.unescape(item.content))
+    when "date", "data" then arr.push(item.content)
+    when "integer"      then arr.push(Integer(item.content))
+    when "true"         then arr.push(true)
+    when "false"        then arr.push(false)
+    when "array"        then arr.push(extract_array(item))
+    when "dict"         then arr.push(extract_dict(item))
+    else
+      puts item.name
     end
   end
-  return arr
+  arr
 end
 
 contents = []
